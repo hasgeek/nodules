@@ -17,6 +17,11 @@ requires = [
     'nodular',
     ]
 
+dependency_links = [
+    'https://github.com/hasgeek/nodular/archive/master.zip#egg=nodular'
+    ]
+
+
 setup(
     name='nodules',
     version=version,
@@ -41,4 +46,5 @@ setup(
     zip_safe=True,
     test_suite='tests',
     install_requires=requires,
+    dependency_links=dependency_links,
     )
