@@ -13,6 +13,9 @@
 
 import sys, os
 
+sys.path.append(os.path.abspath('../nodules/'))
+sys.path.append(os.path.abspath('_themes'))
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -91,7 +94,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+html_theme = 'flask'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -99,7 +102,7 @@ html_theme = 'default'
 #html_theme_options = {}
 
 # Add any paths that contain custom themes here, relative to this directory.
-#html_theme_path = []
+html_theme_path = ['_themes']
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -227,9 +230,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'Nodules', u'Nodules Documentation',
-   u'HasGeek', 'Nodules', 'One line description of project.',
-   'Miscellaneous'),
+    ('index', 'Nodules', u'Nodules Documentation',
+     u'HasGeek', 'Nodules', 'One line description of project.',
+     'Miscellaneous'),
 ]
 
 # Documents to append as an appendix to all manuals.
@@ -243,4 +246,10 @@ texinfo_documents = [
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'http://docs.python.org/': None}
+intersphinx_mapping = {
+    'http://docs.python.org/': None,
+    'http://coaster.readthedocs.org/en/latest/': None,
+    'http://nodular.readthedocs.org/en/latest/': None,
+    'http://baseframe.readthedocs.org/en/latest/': None,
+    'http://werkzeug.pocoo.org/docs/': None
+}
