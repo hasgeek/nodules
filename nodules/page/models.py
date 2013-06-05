@@ -9,9 +9,6 @@ from nodules.models import User
 class PageType(NodeMixin, Node):
     __tablename__ = u'page'
     title = db.Column(db.Unicode(250), nullable=False)
-    user_id = db.Column(None, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship(User, backref=db.backref('pages',
-            cascade='all, delete-orphan', lazy='dynamic'))
     _content = db.Column('content', db.UnicodeText, nullable=False, default=u'')
     _content_html = db.Column('content_html', db.UnicodeText, nullable=False, default=u'')
     content_format = db.Column(db.Unicode(250), nullable=False)    # html / markdown
