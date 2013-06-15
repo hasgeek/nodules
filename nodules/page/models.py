@@ -1,17 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from flask import Markup
-from markdown import markdown
-
 from nodular import NodeMixin, Node, db
-from nodules.models import User
+from nodules.models import User, RichTextColumn
+
+__all__ = ['PageType']
 
 class PageType(NodeMixin, Node):
     __tablename__ = u'page'
     title = db.Column(db.Unicode(250), nullable=False)
-    _content = db.Column('content', db.UnicodeText, nullable=False, default=u'')
-    _content_html = db.Column('content_html', db.UnicodeText, nullable=False, default=u'')
-    content_format = db.Column(db.Unicode(250), nullable=False)    # html / markdown
+    description = RichTextColumn(db, 'description')
+    published_at = db.Column(db.DateTime) # None if not published
 
     def permissions(self, user, inherited=None):
         perms = super(PageType, self).permissions(user, inherited)
@@ -21,18 +19,5 @@ class PageType(NodeMixin, Node):
             perms.add('delete')
         return perms
 
-    @property
-    def content(self):
-       return self._content
-
-    @content.setter
-    def content(self, value):
-        self._content = value
-        if self.content_format != 'html':
-            self._content_html = markdown(value)
-        else:
-            self._content_html = value
-
-    @property
-    def content_html(self):
-       return Markup(self._content_html)
+    def __repr__(self):
+        return "Page <%s>" % self.title
