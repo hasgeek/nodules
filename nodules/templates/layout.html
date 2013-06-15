@@ -1,0 +1,24 @@
+{% extends "baseframe.html" -%}
+
+{% block headerbox -%}
+<header>
+{% block networkbar %}{{ networkbar(siteid=config['SITE_ID'], login=config['LASTUSER_CLIENT_ID'] and true or false) }}{% endblock %}
+  <div id="page-header" class="container{% if not folder %} shadow-bottom{% endif %}">
+    <h1>
+      {%- if node %} &mdash; {{ node.title }}{% endif %}
+    </h1>
+  </div>
+</header>
+{%- endblock %}
+
+{% block messages %}
+{% endblock %}
+
+{% block baseheadline -%}
+{%- endblock %}
+
+{% block basecontent -%}
+{%- endblock -%}
+
+{% block footerscripts %}
+{% endblock %}
