@@ -1,4 +1,6 @@
 {% from 'baseframe/forms.html' import renderform %}
 
-{{page}}
+<b>{{page.title}}</b></br>
+<p>{{page.description.html}}</p>
+
 {{renderform(form)}}

@@ -13,4 +13,4 @@ class RichTextField(TextAreaField):
 
 class PageForm(Form):
     title = TextField('title')
-    content = RichTextField('content')
+    description = RichTextField('description')

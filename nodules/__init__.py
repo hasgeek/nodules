@@ -8,10 +8,12 @@ from nodular import NodeRegistry, Node
 
 # Import basic nodes like User
 
-from nodules import page
 from nodules.models import User, db
 
 # Do not import content nodes until they are required by the client app
+
+# the following imports should be configurable
+from nodules import page
 
 registry = NodeRegistry()
 registry.register_node(Node)
