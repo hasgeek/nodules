@@ -6,11 +6,12 @@ from baseframe import baseframe, assets
 import coaster.app
 import nodules
 from nodules import registry, db
-from nodules.page import PageType, PageView
+from nodules.page import Page, PageView
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SECRET_KEY'] = 'fasfdaf'
+app.config['PAGE_TEMPLATE_THEME'] = 'templates/my_theme/'
 
 
 def error404(error):
