@@ -6,7 +6,7 @@ from nodular import NodeView
 from nodules.models import db
 
 from .forms import PageForm
-from .models import PageType
+from .models import Page
 
 
 class PageView(NodeView):
