@@ -5,9 +5,12 @@ from .views import *
 from .forms import *
 
 
-def init_app(app):
+def init_nodule(root, registry, pages_base_path='/'):
+    """
+    Publish the nodule and return the publisher
+    """
     from nodular import NodePublisher
-    import nodules
 
-    nodules.registry.register_node(Page, view=PageView)
-    app.pagepub = NodePublisher(app.root_node, nodules.registry, '/', u'/pages')
+    registry.register_node(Page, view=PageView)
+    pagepub = NodePublisher(root, registry, pages_base_path)
+    return pagepub

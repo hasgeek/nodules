@@ -1,17 +1,63 @@
 # -*- coding: utf-8 -*-
 
+import os, jinja2
 from flask import Flask
 
 from baseframe import baseframe, assets
 import coaster.app
+from nodular import NodeRegistry, Node
 import nodules
-from nodules import registry, db
-from nodules.page import Page, PageView
+from nodules import db
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SECRET_KEY'] = 'fasfdaf'
+
 app.config['PAGE_TEMPLATE_THEME'] = 'templates/my_theme/'
+
+registry = NodeRegistry()
+registry.register_node(Node)
+
+ # fix this
+def get_root():
+    root = Node.query.filter_by(name='index').first()
+    if not root:
+        root = Node(name=u'index', title=u'Index Node')
+        db.session.add(root)
+        db.session.commit()
+    return root
+
+
+# initialize nodules
+def init_nodules(app):
+    """Load the templates, set root node and initialize the required nodules"""
+    load_templates(app)
+    root = get_root()
+    # the `init` of respective nodules - should be configurable
+    from nodules import page
+    app.pagepub = page.init_nodule(root, registry)
+
+
+def get_theme_dirs(app):
+    paths = [v for (k, v) in app.config.iteritems()
+                if k.upper().endswith('TEMPLATE_THEME')]
+    return [os.path.abspath(p) for p in paths if os.path.exists(p)]
+
+
+def load_templates(app):
+    """
+    Look for the templates in the following places, in that order -
+    1. app's template directory, by default <app_dir>/templates/
+    2. theme directories in app.config e.g.PAGE_THEME_DIR # relative to <app_dir>
+    3. nodules/templates/
+    """
+    template_dirs = get_theme_dirs(app)
+    nodules_dir = os.path.abspath(os.path.dirname(nodules.__file__))
+    template_dirs.append(os.path.join(nodules_dir, 'templates'))
+    loader = jinja2.ChoiceLoader([
+                app.jinja_loader, jinja2.FileSystemLoader(template_dirs)
+            ])
+    app.jinja_loader = loader
 
 
 def error404(error):
@@ -25,7 +71,7 @@ def init_for(env):
     db.init_app(app)
     db.app = app
     db.create_all()
-    nodules.init_app(app)
+    init_nodules(app)
 
 
 @app.route('/<path:anypath>', methods=['GET', 'POST', 'PUT', 'DELETE'])
