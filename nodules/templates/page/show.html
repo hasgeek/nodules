@@ -1,5 +1,11 @@
 
-{{page}}
+<b>{{page.title}}</b>
+
+<br/>
+{{page.description.html}}
+
+<a href="{{page.name}}/edit">Edit</a>
+
 {% for p in pages %}
     {{ p }}
 {% endfor %}
