@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os, jinja2
+import os, jinja2, importlib, warnings
 from flask import Flask
 
 from baseframe import baseframe, assets
@@ -13,6 +13,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SECRET_KEY'] = 'fasfdaf'
 
+app.config['NODULES'] = ('PAGE', 'BLAH')
 app.config['PAGE_TEMPLATE_THEME'] = 'templates/my_theme/'
 
 registry = NodeRegistry()
@@ -33,9 +34,16 @@ def init_nodules(app):
     """Load the templates, set root node and initialize the required nodules"""
     load_templates(app)
     root = get_root()
-    # the `init` of respective nodules - should be configurable
-    from nodules import page
-    app.pagepub = page.init_nodule(root, registry)
+    # the `init` of respective nodules
+    for n in app.config.get('NODULES', []):
+        n = n.lower()
+        try:
+            nodule = importlib.import_module('nodules.%s' % n.lower())
+        except Exception, e:
+            warnings.warn(e.message)
+        else:
+            nodule_publisher = nodule.init_nodule(root, registry)
+            setattr(app, '%spub' % n, nodule_publisher)
 
 
 def get_theme_dirs(app):
