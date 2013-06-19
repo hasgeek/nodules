@@ -15,6 +15,7 @@ app.config['SECRET_KEY'] = 'fasfdaf'
 
 app.config['NODULES'] = ('PAGE', 'BLAH')
 app.config['PAGE_TEMPLATE_THEME'] = 'templates/my_theme/'
+app.config['PAGE_BASEURL'] = '/pages'   # if this is not set, publish `page` nodule at '/
 
 registry = NodeRegistry()
 registry.register_node(Node)
@@ -34,15 +35,17 @@ def init_nodules(app):
     """Load the templates, set root node and initialize the required nodules"""
     load_templates(app)
     root = get_root()
+
     # the `init` of respective nodules
     for n in app.config.get('NODULES', []):
         n = n.lower()
         try:
-            nodule = importlib.import_module('nodules.%s' % n.lower())
+            nodule = importlib.import_module('nodules.%s' % n)
         except Exception, e:
             warnings.warn(e.message)
         else:
-            nodule_publisher = nodule.init_nodule(root, registry)
+            nodule_base_path = app.config.get('%s_BASEURL' % n.upper(), '/')
+            nodule_publisher = nodule.init_nodule(root, registry, nodule_base_path)
             setattr(app, '%spub' % n, nodule_publisher)
 
 
