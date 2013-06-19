@@ -1,15 +1,20 @@
 # -*- coding: utf-8 -*-
 
 from nodular import NodeMixin, Node, db
-from nodules.models import User, RichTextColumn
+from nodules.models import User, RichTextColumn, RichText
 
 __all__ = ['Page']
 
 class Page(NodeMixin, Node):
     __tablename__ = u'page'
+
     title = db.Column(db.Unicode(250), nullable=False)
     description = RichTextColumn(db, 'description')
     published_at = db.Column(db.DateTime) # None if not published
+
+    def __init__(self, *args, **kwargs):
+        kwargs['description'] = RichText(kwargs.get('description', ''))
+        super(Page, self).__init__(*args, **kwargs)
 
     def permissions(self, user, inherited=None):
         perms = super(Page, self).permissions(user, inherited)

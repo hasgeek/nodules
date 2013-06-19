@@ -89,7 +89,7 @@ def init_for(env):
 # temporary
 def add_test_data():
     if not Page.query.first():
-        p = Page(title='hello', parent=app.root)
+        p = Page(title='hello', description='**description**', parent=app.root)
         p.make_name()
         db.session.add(p)
         db.session.commit()
