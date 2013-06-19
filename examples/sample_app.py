@@ -1,21 +1,23 @@
 # -*- coding: utf-8 -*-
 
 import os, jinja2, importlib, warnings
-from flask import Flask
+from flask import Flask, render_template, request, flash, redirect
 
 from baseframe import baseframe, assets
 import coaster.app
 from nodular import NodeRegistry, Node
 import nodules
 from nodules import db
+from nodules.page import Page
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SECRET_KEY'] = 'fasfdaf'
 
-app.config['NODULES'] = ('PAGE', 'BLAH')
-app.config['PAGE_TEMPLATE_THEME'] = 'templates/my_theme/'
-app.config['PAGE_BASEURL'] = '/pages'   # if this is not set, publish `page` nodule at '/
+app.config['NODULES'] = ('PAGE', )
+app.config['PAGE_TEMPLATE_THEME'] = 'templates/mytheme/'
+# app.config['PAGE_BASEURL'] = '/pages'   # if this is not set, publish `page` nodule at '/
 
 registry = NodeRegistry()
 registry.register_node(Node)
@@ -34,7 +36,7 @@ def get_root():
 def init_nodules(app):
     """Load the templates, set root node and initialize the required nodules"""
     load_templates(app)
-    root = get_root()
+    app.root = get_root()
 
     # the `init` of respective nodules
     for n in app.config.get('NODULES', []):
@@ -45,7 +47,7 @@ def init_nodules(app):
             warnings.warn(e.message)
         else:
             nodule_base_path = app.config.get('%s_BASEURL' % n.upper(), '/')
-            nodule_publisher = nodule.init_nodule(root, registry, nodule_base_path)
+            nodule_publisher = nodule.init_nodule(app.root, registry, nodule_base_path)
             setattr(app, '%spub' % n, nodule_publisher)
 
 
@@ -84,6 +86,17 @@ def init_for(env):
     db.create_all()
     init_nodules(app)
 
+# temporary
+def add_test_data():
+    if not Page.query.first():
+        p = Page(title='hello', parent=app.root)
+        p.make_name()
+        db.session.add(p)
+        db.session.commit()
+
+@app.route('/', methods=['GET'])
+def apage():
+    return redirect('/hello')
 
 @app.route('/<path:anypath>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def publish_path(anypath):
@@ -92,4 +105,5 @@ def publish_path(anypath):
 
 if __name__ == '__main__':
     init_for('dev')
+    add_test_data()
     app.run(port=4500, debug=True)
