@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask.ext.wtf import Form, TextField, TextAreaField
+from flask.ext.wtf import Form, TextField, TextAreaField, Required
 
 from nodules.models import RichText
 
@@ -12,5 +12,5 @@ class RichTextField(TextAreaField):
 
 
 class PageForm(Form):
-    title = TextField('title')
+    title = TextField('title', validators=[Required()])
     description = RichTextField('description')
