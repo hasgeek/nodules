@@ -15,7 +15,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SECRET_KEY'] = 'fasfdaf'
 
-app.config['NODULES'] = ('PAGE', )
+app.config['NODULES'] = ('PAGE', 'FOLDER', )
 app.config['PAGE_TEMPLATE_THEME'] = 'templates/mytheme/'
 # app.config['PAGE_BASEURL'] = '/pages'   # if this is not set, publish `page` nodule at '/
 
@@ -24,9 +24,11 @@ registry.register_node(Node)
 
  # fix this
 def get_root():
-    root = Node.query.filter_by(name='index').first()
+    from nodules.folder import Folder
+    root = Folder.query.filter_by(title='root').first()
     if not root:
-        root = Node(name=u'index', title=u'Index Node')
+        root = Folder(title=u'root')
+        root.make_name()
         db.session.add(root)
         db.session.commit()
     return root
@@ -48,7 +50,7 @@ def init_nodules(app):
         else:
             nodule_base_path = app.config.get('%s_BASEURL' % n.upper(), '/')
             nodule_publisher = nodule.init_nodule(app.root, registry, nodule_base_path)
-            setattr(app, '%spub' % n, nodule_publisher)
+            setattr(app, '%s_pub' % n, nodule_publisher)
 
 
 def get_theme_dirs(app):
@@ -86,24 +88,12 @@ def init_for(env):
     db.create_all()
     init_nodules(app)
 
-# temporary
-def add_test_data():
-    if not Page.query.first():
-        p = Page(title='hello', description='**description**', parent=app.root)
-        p.make_name()
-        db.session.add(p)
-        db.session.commit()
-
-@app.route('/', methods=['GET'])
-def apage():
-    return redirect('/hello')
 
 @app.route('/<path:anypath>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def publish_path(anypath):
-    return app.pagepub.publish(anypath)
+    return app.folder_pub.publish(anypath)
 
 
 if __name__ == '__main__':
     init_for('dev')
-    add_test_data()
     app.run(port=4500, debug=True)
