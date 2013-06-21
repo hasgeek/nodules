@@ -4,8 +4,10 @@
 <br/>
 {{page.description.html}}
 
-<a href="{{page.name}}/edit">Edit</a>
+<a href="{{page.path}}/edit">Edit</a>
 
 {% for p in pages %}
     {{ p }}
 {% endfor %}
+
+<a href="{{page.root.path}}index">All Pages</a>
