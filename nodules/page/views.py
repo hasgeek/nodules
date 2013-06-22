@@ -8,6 +8,7 @@ from nodules.models import db
 from .forms import PageForm
 from .models import Page
 
+__all__ = ['PageView', 'NewPageView']
 
 class PageView(NodeView):
     @NodeView.route('/')
@@ -33,3 +34,20 @@ class PageView(NodeView):
             root_path = self.node.root.path
             self.node.delete()
         return redirect(root_path)
+
+
+class NewPageView(NodeView):
+    """New page view to be attached to Container node.
+       e.g., folder - self.node.type would be `folder`
+    """
+    @NodeView.route('/new/page', methods=['GET', 'POST'])
+    def new(self):
+        pf = PageForm(request.form)
+        p = Page(parent=self.node)
+        if pf.validate_on_submit():
+            pf.populate_obj(p)
+            p.make_name()
+            db.session.commit()
+            flash('Changes saved.')
+            return redirect(p.path)
+        return render_template('page/edit.html', page=None, form=pf)
