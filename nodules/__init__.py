@@ -13,3 +13,5 @@ from nodular import NodeRegistry, Node
 from nodules.models import User, db
 
 # Do not import content nodes until they are required by the client app
+
+registry = NodeRegistry()

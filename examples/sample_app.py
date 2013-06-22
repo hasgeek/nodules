@@ -5,9 +5,9 @@ from flask import Flask, render_template, request, flash, redirect
 
 from baseframe import baseframe, assets
 import coaster.app
-from nodular import NodeRegistry, Node
+from nodular import Node
 import nodules
-from nodules import db
+from nodules import db, registry
 from nodules.page import Page
 
 
@@ -19,7 +19,6 @@ app.config['NODULES'] = ('PAGE', 'FOLDER', )
 app.config['PAGE_TEMPLATE_THEME'] = 'templates/mytheme/'
 # app.config['PAGE_BASEURL'] = '/pages'   # if this is not set, publish `page` nodule at '/
 
-registry = NodeRegistry()
 registry.register_node(Node)
 
  # fix this
