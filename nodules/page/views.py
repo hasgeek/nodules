@@ -12,7 +12,7 @@ __all__ = ['PageView', 'NewPageView']
 
 class PageView(NodeView):
     @NodeView.route('/')
-    def index(self):
+    def show(self):
         return render_template('page/show.html', page=self.node)
 
     @NodeView.route('/edit', methods=['GET', 'POST'])
@@ -38,7 +38,7 @@ class PageView(NodeView):
 
 class NewPageView(NodeView):
     """New page view to be attached to Container node.
-       e.g., folder - self.node.type would be `folder`
+       e.g., folder - self.node.type would be `folder`.
     """
     @NodeView.route('/new/page', methods=['GET', 'POST'])
     def new(self):
