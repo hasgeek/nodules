@@ -20,10 +20,10 @@ app.config['PAGE_TEMPLATE_THEME'] = 'templates/mytheme/'
 # app.config['PAGE_BASEURL'] = '/pages'   # if this is not set, publish `page` nodule at '/
 
 registry.register_node(Node)
+from nodules.folder import Folder   # import this to make the root node as folder
 
  # fix this
 def get_root():
-    from nodules.folder import Folder
     root = Folder.query.filter_by(title='root').first()
     if not root:
         root = Folder(title=u'root')
