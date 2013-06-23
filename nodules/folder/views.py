@@ -7,7 +7,7 @@ from nodules import db, registry
 
 
 class FolderView(NodeView):
-    @NodeView.route('/blah')
+    @NodeView.route('/')
     def index(self):
         index_node = Node.query.filter_by(parent=self.node, name='index').first()
         if index_node:

@@ -88,6 +88,7 @@ def init_for(env):
     init_nodules(app)
 
 
+@app.route('/', defaults={'anypath': ''}, methods=['GET', 'POST', 'PUT', 'DELETE'])
 @app.route('/<path:anypath>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def publish_path(anypath):
     return app.folder_pub.publish(anypath)
