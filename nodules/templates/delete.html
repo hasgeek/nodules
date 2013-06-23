@@ -1,0 +1,9 @@
+{% from 'baseframe/forms.html' import renderform %}
+
+<div>
+	<h5>Confirm delete</h5>
+	<p>Are you sure you want to delete {{node.type | upper}} "<strong>{{node.title}}</strong>"?</p>
+	{% set action_url = node.path + '/delete'%}
+	{% set cancel_url = node.path %}
+	<div>{{ renderform(form, "delete", "Yes, delete it", action=action_url, cancel_url=cancel_url)}}</div>
+</div>

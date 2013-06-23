@@ -4,6 +4,7 @@ from flask import render_template, request, redirect, flash
 
 from nodular import NodeView
 from nodules.models import db
+from nodules.forms import DeleteForm
 
 from .forms import PageForm
 from .models import Page
@@ -30,10 +31,13 @@ class PageView(NodeView):
     @NodeView.route('/delete', methods=['GET', 'POST'])
     @NodeView.requires_permission('delete', 'siteadmin')
     def delete(self):
-        if request.method == 'POST':
+        form = DeleteForm()
+        if form.validate_on_submit():
             root_path = self.node.root.path
-            self.node.delete()
-        return redirect(root_path)
+            db.session.delete(self.node)
+            db.session.commit()
+            return redirect(root_path)
+        return render_template('delete.html', node=self.node, form=form)
 
 
 class NewPageView(NodeView):
