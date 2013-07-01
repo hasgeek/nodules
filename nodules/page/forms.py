@@ -3,6 +3,7 @@
 from flask.ext.wtf import Form, TextField, TextAreaField, Required
 
 from nodules.models import RichText
+from nodules.forms import TemplateMixin
 
 
 class RichTextField(TextAreaField):
@@ -11,6 +12,6 @@ class RichTextField(TextAreaField):
         setattr(obj, name, rt)
 
 
-class PageForm(Form):
+class PageForm(TemplateMixin, Form):
     title = TextField('title', validators=[Required()])
     description = RichTextField('description')

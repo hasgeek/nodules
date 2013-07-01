@@ -14,7 +14,8 @@ __all__ = ['PageView', 'NewPageView']
 class PageView(NodeView):
     @NodeView.route('/')
     def show(self):
-        return render_template('page/show.html', page=self.node)
+        templ = self.node.template or 'show.html'
+        return render_template('page/%s' % templ, page=self.node)
 
     @NodeView.route('/edit', methods=['GET', 'POST'])
     @NodeView.requires_permission('edit', 'siteadmin')
@@ -51,6 +52,8 @@ class NewPageView(NodeView):
         if pf.validate_on_submit():
             pf.populate_obj(p)
             p.make_name()
+            if pf.template:
+                p.properties['template'] = pf.template.data
             db.session.commit()
             flash('Changes saved.')
             return redirect(p.path)
