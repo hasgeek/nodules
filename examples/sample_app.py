@@ -16,7 +16,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SECRET_KEY'] = 'fasfdaf'
 
 app.config['NODULES'] = ('PAGE', 'FOLDER', )
-app.config['PAGE_TEMPLATE_THEME'] = 'templates/mytheme/'
+app.config['THEMES_PATH'] = 'templates/themes/'
+app.config['PAGE_THEME'] = 'templates/themes/mytheme/'
 # app.config['PAGE_BASEURL'] = '/pages'   # if this is not set, publish `page` nodule at '/
 
 registry.register_node(Node)
@@ -54,7 +55,7 @@ def init_nodules(app):
 
 def get_theme_dirs(app):
     paths = [v for (k, v) in app.config.iteritems()
-                if k.upper().endswith('TEMPLATE_THEME')]
+                if k.upper().endswith('_THEME')]
     return [os.path.abspath(p) for p in paths if os.path.exists(p)]
 
 
