@@ -6,7 +6,10 @@ from ._version import *
 
 import os.path, jinja2
 
-from nodular import NodeRegistry, Node
+from nodular import NodeRegistry
+
+# get the monkey patched Node with theme and template
+from .node import Node
 
 # Import basic nodes like User
 

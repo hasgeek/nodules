@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, flash, redirect
 
 from baseframe import baseframe, assets
 import coaster.app
-from nodular import Node
+from nodules import Node
 import nodules
 from nodules import db, registry
 from nodules.page import Page
