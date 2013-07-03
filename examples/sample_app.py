@@ -81,12 +81,16 @@ def error404(error):
 
 def init_for(env):
     coaster.app.init_app(app, env)
-    baseframe.init_app(app, requires=['baseframe'])
+    baseframe.init_app(app, requires=['baseframe', 'codemirror'])
     app.error_handlers[404] =  error404
     db.init_app(app)
     db.app = app
     db.create_all()
     init_nodules(app)
+
+@app.route('/blah')
+def index():
+    pass
 
 
 @app.route('/', defaults={'anypath': ''}, methods=['GET', 'POST', 'PUT', 'DELETE'])

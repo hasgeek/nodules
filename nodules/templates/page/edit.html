@@ -1,9 +1,24 @@
-{% from 'baseframe/forms.html' import renderform %}
+
+{% from 'baseframe/forms.html' import rendersubmit, renderfield %}
 
 {% if page %}
     <b>{{page.title}}</b></br>
     <p>{{page.description.html}}</p>
 {% endif %}
 
-{{renderform(form)}}
+<form method="POST">
+    {%- if form.errors %}
+      <div class="alert alert-error">
+        <a class="close" data-dismiss="alert">×</a>
+        Please correct the indicated errors.
+      </div>
+    {%- endif %}
 
+{{form.hidden_tag()}}
+{{renderfield(form.title)}}
+{{renderfield(form.description, widget_css_class="codemirror")}}
+{{renderfield(form.template)}}
+{{rendersubmit([(None, "Submit", 'btn-primary')])}}
+</form>
+
+{% extends "baseframe.html" -%}
