@@ -1,4 +1,6 @@
+{% extends "baseframe.html" -%}
 
+{% block basecontent %}
 <b>{{page.title}}</b>
 
 <br/>
@@ -11,3 +13,4 @@
 {% endfor %}
 
 <a href="{{page.root.path}}">All Pages</a>
+{% endblock %}

@@ -1,5 +1,7 @@
-
+{% extends "baseframe.html" -%}
 {% from 'baseframe/forms.html' import rendersubmit, renderfield %}
+
+{% block basecontent %}
 
 {% if page %}
     <b>{{page.title}}</b></br>
@@ -21,4 +23,4 @@
 {{rendersubmit([(None, "Submit", 'btn-primary')])}}
 </form>
 
-{% extends "baseframe.html" -%}
+{% endblock %}
