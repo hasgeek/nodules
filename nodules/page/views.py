@@ -24,6 +24,7 @@ class PageView(NodeView):
         if form.validate_on_submit():
             form.populate_obj(self.node)
             self.node.make_name()
+            self.node.properties['template'] = form.template.data
             db.session.commit()
             flash('Changes saved.')
             return redirect(self.node.path)
@@ -52,8 +53,7 @@ class NewPageView(NodeView):
         if pf.validate_on_submit():
             pf.populate_obj(p)
             p.make_name()
-            if pf.template:
-                p.properties['template'] = pf.template.data
+            p.properties['template'] = pf.template.data
             db.session.commit()
             flash('Changes saved.')
             return redirect(p.path)
