@@ -1,14 +1,45 @@
 {% extends "baseframe.html" -%}
 {% from 'baseframe/forms.html' import rendersubmit, renderfield %}
 
+{% block footerscripts %}
+<script>
+$(function (){
+    var autosave_interval = {{page.autosave}};
+    function autosave() {
+        setTimeout(function() {
+                $.ajax({
+                    type: "POST",
+                    url: "{{page.path}}/edit",
+                    data: $('form#edit-page').serialize(),
+                    success: function(data){
+                        if (data){
+                            $('p#save_status').html('Page saved.')
+                                    .show().delay(1000).fadeOut();
+                    },
+                    dataType: "json",
+                    complete: autosave,
+                    timeout: 5000   //timeout after 5 secs.
+                });
+            },
+        autosave_interval);
+    };
+
+    if (autosave_interval){
+        autosave();
+    }
+});
+</script>
+{% endblock %}
+
 {% block basecontent %}
+<p id='save_status' style='display:none;' class="alert alert-message fade in"></p>
 
 {% if page %}
     <b>{{page.title}}</b></br>
     <p>{{page.description.html}}</p>
 {% endif %}
 
-<form method="POST">
+<form method="POST" id="edit-page">
     {%- if form.errors %}
       <div class="alert alert-error">
         <a class="close" data-dismiss="alert">×</a>
@@ -18,7 +49,7 @@
 
 {{form.hidden_tag()}}
 {{renderfield(form.title)}}
-{{renderfield(form.description, widget_css_class="codemirror")}}
+{{renderfield(form.description, widget_css_class="codemirror1")}}
 {{renderfield(form.template)}}
 {{rendersubmit([(None, "Submit", 'btn-primary')])}}
 </form>

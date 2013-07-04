@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, request, redirect, flash
+from flask import render_template, request, redirect, flash, jsonify
 
 from nodular import NodeView
 from nodules.models import db
@@ -26,8 +26,11 @@ class PageView(NodeView):
             self.node.make_name()
             self.node.properties['template'] = form.template.data
             db.session.commit()
-            flash('Changes saved.')
-            return redirect(self.node.path)
+            if request.is_xhr:
+                return jsonify({'status': 'success'})
+            else:
+                flash('Changes saved.')
+                return redirect(self.node.path)
         return render_template('page/edit.html', page=self.node, form=form)
 
     @NodeView.route('/delete', methods=['GET', 'POST'])
