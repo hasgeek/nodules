@@ -5,8 +5,12 @@
 <script>
 $(function (){
     var autosave_interval = {{page.autosave}};
+    var editor = $('.CodeMirror')[0].CodeMirror;
     function autosave() {
         setTimeout(function() {
+                // get the text to the actual textarea from the cm
+                editor.save();
+                // then post it to be saved
                 $.ajax({
                     type: "POST",
                     url: "{{page.path}}/edit",
@@ -14,7 +18,8 @@ $(function (){
                     success: function(data){
                         if (data){
                             $('p#save_status').html('Page saved.')
-                                    .show().delay(1000).fadeOut();
+                                .show().delay(1000).fadeOut();
+                        }
                     },
                     dataType: "json",
                     complete: autosave,
@@ -49,7 +54,7 @@ $(function (){
 
 {{form.hidden_tag()}}
 {{renderfield(form.title)}}
-{{renderfield(form.description, widget_css_class="codemirror1")}}
+{{renderfield(form.description, widget_css_class="codemirror")}}
 {{renderfield(form.template)}}
 {{rendersubmit([(None, "Submit", 'btn-primary')])}}
 </form>
