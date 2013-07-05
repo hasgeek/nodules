@@ -15,3 +15,8 @@ class RichTextField(TextAreaField):
 class PageForm(TemplateMixin, Form):
     title = TextField('title', validators=[Required()])
     description = RichTextField('description')
+
+    def populate_obj(self, obj):
+        super(Form, self).populate_obj(obj)
+        obj.make_name()
+        obj.properties['template'] = self.template.data
