@@ -11,6 +11,14 @@ from .models import Page
 
 __all__ = ['PageView', 'NewPageView']
 
+def make_response(request, response):
+    if request.is_xhr:
+        return jsonify(response)
+    else:
+        flash('Changes saved.')
+        return redirect(response.get('path'))
+
+
 class PageView(NodeView):
     @NodeView.route('/')
     def show(self):
@@ -24,11 +32,8 @@ class PageView(NodeView):
         if form.validate_on_submit():
             form.populate_obj(self.node)
             db.session.commit()
-            if request.is_xhr:
-                return jsonify({'status': 'success', 'path': self.node.path})
-            else:
-                flash('Changes saved.')
-                return redirect(self.node.path)
+            d = dict(status='success', path=self.node.path)
+            return make_response(request, d)
         return render_template('page/edit.html', page=self.node, form=form)
 
     @NodeView.route('/delete', methods=['GET', 'POST'])
@@ -54,9 +59,6 @@ class NewPageView(NodeView):
         if pf.validate_on_submit():
             pf.populate_obj(p)
             db.session.commit()
-            if request.is_xhr:
-                return jsonify({'status': 'success', 'path': p.path})
-            else:
-                flash('Changes saved.')
-                return redirect(p.path)
+            d = dict(status='success', path=p.path)
+            return make_response(request, d)
         return render_template('page/edit.html', page=p, form=pf)
