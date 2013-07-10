@@ -4,34 +4,46 @@
 {% block footerscripts %}
 <script>
 $(function (){
-    var autosave_interval = {{page.autosave}};
+    var page_changed = false;
+    var autosave_interval = {{page.autosave or 0}};
     var editor = $('.CodeMirror')[0].CodeMirror;
-    function autosave() {
-        setTimeout(function() {
-                // get the text to the actual textarea from the cm
-                editor.save();
-                // then post it to be saved
-                $.ajax({
-                    type: "POST",
-                    url: "{{page.path}}/edit",
-                    data: $('form#edit-page').serialize(),
-                    success: function(data){
-                        if (data){
-                            $('p#save_status').html('Page saved.')
-                                .show().delay(1000).fadeOut();
-                        }
-                    },
-                    dataType: "json",
-                    complete: autosave,
-                    timeout: 5000   //timeout after 5 secs.
-                });
-            },
-        autosave_interval);
-    };
 
-    if (autosave_interval){
+    function save_page(){
+        // check if the form has changed before trying to save
+        if (page_changed){
+            // get the text to the actual textarea from the cm
+            editor.save();
+            // then post it to be saved
+            $.ajax({
+                type: "POST",
+                url: document.location.pathname,
+                data: $('form#edit-page').serialize(),
+                success: function(data){
+                    if (data){
+                        $('p#save_status').html('Page saved.')
+                            .show().delay(1000).fadeOut();
+                    }
+                },
+                dataType: "json",
+                timeout: 5000   // timeout post after 5 secs.
+            });
+            page_changed = false;
+        }
         autosave();
     }
+
+$('form#edit-page').bind("keyup change", function(){
+    page_changed = true;
+    //console.log('page is changed');
+});
+
+function autosave() {
+    setTimeout(save_page, autosave_interval)
+};
+
+if (autosave_interval){
+    autosave();
+}
 });
 </script>
 {% endblock %}
