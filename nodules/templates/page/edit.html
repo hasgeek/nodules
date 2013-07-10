@@ -7,6 +7,7 @@ $(function (){
     var page_changed = false;
     var autosave_interval = {{page.autosave or 0}};
     var editor = $('.CodeMirror')[0].CodeMirror;
+    var page_form = $('form#new-or-edit-page');
 
     function save_page(){
         // check if the form has changed before trying to save
@@ -16,10 +17,11 @@ $(function (){
             // then post it to be saved
             $.ajax({
                 type: "POST",
-                url: document.location.pathname,
-                data: $('form#edit-page').serialize(),
+                url:  page_form.attr('action'),
+                data: page_form.serialize(),
                 success: function(data){
-                    if (data){
+                    if (data && data.path ){
+                        page_form.attr('action', data.path + '/edit');
                         $('p#save_status').html('Page saved.')
                             .show().delay(1000).fadeOut();
                     }
@@ -34,7 +36,6 @@ $(function (){
 
 $('form#edit-page').bind("keyup change", function(){
     page_changed = true;
-    //console.log('page is changed');
 });
 
 function autosave() {
@@ -52,11 +53,17 @@ if (autosave_interval){
 <p id='save_status' style='display:none;' class="alert alert-message fade in"></p>
 
 {% if page %}
-    <b>{{page.title}}</b></br>
+    <b>{{page.title or '' }}</b></br>
     <p>{{page.description.html}}</p>
 {% endif %}
 
-<form method="POST" id="edit-page">
+{% if page.title %}
+    {% set action_url = page.path + '/edit' %}
+{% else %}
+    {% set action_url = '/new/page' %}
+{% endif %}
+
+<form method="POST" id="new-or-edit-page" action='{{action_url}}'>
     {%- if form.errors %}
       <div class="alert alert-error">
         <a class="close" data-dismiss="alert">×</a>

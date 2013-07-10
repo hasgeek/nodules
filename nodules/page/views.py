@@ -25,7 +25,7 @@ class PageView(NodeView):
             form.populate_obj(self.node)
             db.session.commit()
             if request.is_xhr:
-                return jsonify({'status': 'success'})
+                return jsonify({'status': 'success', 'path': self.node.path})
             else:
                 flash('Changes saved.')
                 return redirect(self.node.path)
@@ -54,6 +54,9 @@ class NewPageView(NodeView):
         if pf.validate_on_submit():
             pf.populate_obj(p)
             db.session.commit()
-            flash('Changes saved.')
-            return redirect(p.path)
-        return render_template('page/edit.html', page=None, form=pf)
+            if request.is_xhr:
+                return jsonify({'status': 'success', 'path': p.path})
+            else:
+                flash('Changes saved.')
+                return redirect(p.path)
+        return render_template('page/edit.html', page=p, form=pf)
