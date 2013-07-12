@@ -10,7 +10,6 @@ class Page(NodeMixin, Node):
 
     title = db.Column(db.Unicode(250), nullable=False)
     description = RichTextColumn(db, 'description')
-    published_at = db.Column(db.DateTime) # None if not published
     # auto save the page for every 1 minute. Disable autosave by setting it to 0.
     autosave = 60000
 
@@ -23,6 +22,7 @@ class Page(NodeMixin, Node):
         perms.add('view')  # Grant everyone view access
         if user == self.user:
             perms.add('edit')
+            perms.add('publish')    # publish/unpublish
             perms.add('delete')
         return perms
 

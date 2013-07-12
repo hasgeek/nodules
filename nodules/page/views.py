@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, request, redirect, flash, jsonify
+from datetime import datetime
+from flask import render_template, request, redirect, flash, jsonify, abort
 
 from nodular import NodeView
 from nodules.models import db
-from nodules.forms import DeleteForm
+from nodules.forms import EmptyForm
 
 from .forms import PageForm
 from .models import Page
@@ -23,7 +24,8 @@ class PageView(NodeView):
     @NodeView.route('/')
     def show(self):
         templ = self.node.template or 'show.html'
-        return render_template('page/%s' % templ, page=self.node)
+        pf, upf = EmptyForm(), EmptyForm()  # publish, unpublish forms
+        return render_template('page/%s' % templ, page=self.node, pf=pf, upf=upf)
 
     @NodeView.route('/edit', methods=['GET', 'POST'])
     @NodeView.requires_permission('edit', 'siteadmin')
@@ -39,13 +41,30 @@ class PageView(NodeView):
     @NodeView.route('/delete', methods=['GET', 'POST'])
     @NodeView.requires_permission('delete', 'siteadmin')
     def delete(self):
-        form = DeleteForm()
-        if form.validate_on_submit():
+        delete_form = EmptyForm()
+        if delete_form.validate_on_submit():
             root_path = self.node.root.path
             db.session.delete(self.node)
             db.session.commit()
             return redirect(root_path)
-        return render_template('delete.html', node=self.node, form=form)
+        return render_template('delete.html', node=self.node, form=delete_form)
+
+    @NodeView.route('/<action>', methods=['POST'])
+    @NodeView.requires_permission('publish', 'siteadmin')
+    def publish(self, action):
+        if not action in ('publish', 'unpublish'):
+            abort(404)
+        form = EmptyForm()
+        if form.validate_on_submit():
+            if action == 'publish':
+                flash('Page published.')
+                self.node.published_at = datetime.now()
+            else:
+                flash('This page is now a draft.')
+                self.node.published_at = None
+            db.session.commit()
+            return redirect(self.node.path)
+        return redirect(request.referrer)
 
 
 class NewPageView(NodeView):
@@ -61,4 +80,4 @@ class NewPageView(NodeView):
             db.session.commit()
             d = dict(status='success', path=p.path)
             return make_response(request, d)
-        return render_template('page/edit.html', page=p, form=pf)
+        return render_template('page/edit.html', page=p, page_form=pf)

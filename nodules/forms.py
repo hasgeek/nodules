@@ -2,7 +2,7 @@
 
 from flask.ext.wtf import Form, TextField
 
-class DeleteForm(Form):
+class EmptyForm(Form):
     # just the csrf info
     pass
 

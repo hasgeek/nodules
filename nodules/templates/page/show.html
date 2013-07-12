@@ -1,9 +1,25 @@
 {% extends "baseframe.html" -%}
+{% from 'baseframe/forms.html' import renderform %}
 
 {% block basecontent %}
-<b>{{page.title}}</b>
 
+<div class="row">
+<div class="span9">
+<b>{{page.title}}</b>
+</div>
+<div class="span3">
+{% if not page.published_at %}
+    {% set action_url = page.path + '/publish' %}
+    <!-- Publish -->
+    {{renderform(pf, formid="publish-form", submit="Publish", action=action_url)}}
+{% else %}
+    <!-- Unpublish -->
+    {% set action_url = page.path + '/unpublish' %}
+    {{renderform(upf, formid="unpublish-form", submit="Unpublish", action=action_url)}}
+{% endif %}
+</div>
 <br/>
+
 {{page.description.html}}
 
 <a href="{{page.path}}/edit">Edit</a>
