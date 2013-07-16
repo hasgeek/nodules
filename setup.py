@@ -16,6 +16,7 @@ else:
 requires = [
     'nodular',
     'flask-lastuser',
+    'flask.ext.wtf',
     ]
 
 dependency_links = [
