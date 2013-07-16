@@ -9,6 +9,7 @@ from nodules import Node
 import nodules
 from nodules import db, registry
 from nodules.page import Page
+from nodules.folder import Folder
 
 
 app = Flask(__name__)
@@ -18,16 +19,18 @@ app.config['SECRET_KEY'] = 'fasfdaf'
 app.config['NODULES'] = ('PAGE', 'FOLDER', )
 app.config['THEMES_PATH'] = 'templates/themes/'
 app.config['PAGE_THEME'] = 'templates/themes/mytheme/'
-# app.config['PAGE_BASEURL'] = '/pages'   # if this is not set, publish `page` nodule at '/
+# app.config['PAGE_BASEPATH'] = '/pages'
+# app.config['FOLDER_BASEPATH'] = '/folders'
+# app.config['FOLDER_URLPATH'] = '/'
+
 
 registry.register_node(Node)
-from nodules.folder import Folder   # import this to make the root node as folder
+from nodules.folder import Folder
 
- # fix this
 def get_root():
-    root = Folder.query.filter_by(title='root').first()
+    root = Node.query.filter_by(title='Root').first()
     if not root:
-        root = Folder(title=u'root')
+        root = Node(title='Root')
         root.make_name()
         db.session.add(root)
         db.session.commit()
@@ -48,8 +51,9 @@ def init_nodules(app):
         except Exception, e:
             warnings.warn(e.message)
         else:
-            nodule_base_path = app.config.get('%s_BASEURL' % n.upper(), '/')
-            nodule_publisher = nodule.init_nodule(app.root, registry, nodule_base_path)
+            nodule_basepath = app.config.get('%s_BASEPATH' % n.upper(), '/')
+            nodule_urlpath = app.config.get('%s_URLPATH' % n.upper(), '/')
+            nodule_publisher = nodule.init_nodule(app.root, registry, nodule_basepath, nodule_urlpath)
             setattr(app, '%s_pub' % n, nodule_publisher)
 
 
@@ -97,7 +101,6 @@ def index():
 @app.route('/<path:anypath>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def publish_path(anypath):
     return app.folder_pub.publish(anypath)
-
 
 if __name__ == '__main__':
     init_for('dev')
