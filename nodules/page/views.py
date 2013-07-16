@@ -80,4 +80,4 @@ class NewPageView(NodeView):
             db.session.commit()
             d = dict(status='success', path=p.path)
             return make_response(request, d)
-        return render_template('page/edit.html', page=p, page_form=pf)
+        return render_template('page/edit.html', page=p, form=pf)
