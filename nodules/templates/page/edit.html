@@ -58,10 +58,11 @@ if (autosave_interval){
 {% endif %}
 
 {% if page.title %}
-    {% set action_url = page.path + '/edit' %}
+    {% set action_url = url_for(page, 'edit') %}
 {% else %}
-    {% set action_url = '/new/page' %}
+    {% set action_url = url_for(page.parent, 'newpage') %}
 {% endif %}
+
 
 <form method="POST" id="new-or-edit-page" action='{{action_url}}'>
     {%- if form.errors %}

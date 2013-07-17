@@ -17,18 +17,18 @@ class FolderView(NodeView):
             return view_cls(index_node).show()
         else:
             children = Node.query.filter_by(parent=self.node)
-            return render_template('folder/index.html', children=children)
+            return render_template('folder/index.html', folder=self.node, children=children)
 
 
 class NewFolderView(NodeView):
     @NodeView.route('/new/folder', methods=['GET', 'POST'])
-    def index(self):
+    def newfolder(self):
         nf = NewFolderForm(request.form)
         if nf.validate_on_submit():
             f = Folder(name=nf.name.data, title=nf.title.data, parent=self.node)
             nf.populate_obj(f)
             db.session.commit()
-            flash('Folder added with title %s.' % nf.title.data)
+            flash('Folder added with title "%s".' % nf.title.data)
             return redirect('/')
         folders = Folder.query.all()
         return render_template('folder/newfolder.html', form=nf, folders=folders)

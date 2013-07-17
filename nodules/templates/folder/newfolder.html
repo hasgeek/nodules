@@ -3,10 +3,11 @@
 
 {% block basecontent %}
 
+
 {% if folders %}
     Existing Folders <br/>
     {% for f in folders %}
-        <a href='{{f.path}}'>{{f.title}}</a> <br />
+        <a href='{{url_for(f)}}'>{{f.title}}</a> <br />
     {% endfor %}
 {% endif %}
 
