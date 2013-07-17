@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os, jinja2, importlib, warnings
+import os, jinja2, importlib, warnings, flask
 from flask import Flask, redirect
 
 from baseframe import baseframe, assets
@@ -11,6 +11,23 @@ from nodules import Node, db, registry
 app = Flask(__name__, instance_relative_config=True)
 
 registry.register_node(Node)
+
+def url_for(arg, *args, **kwargs):
+    """
+    Makes URLs in 2 cases.
+    e.g.,
+    1. {{ url_for(page, 'edit') }} where `page` is a Node type and 'edit' is an endpoint in its NodeView.
+    2. {{ url_for('baseframe.static', filename='index.html')}} which is handled by Flask.
+    """
+    if isinstance(arg, Node):
+        return registry.url_for(arg, *args, **kwargs)
+    return flask.url_for(arg, **kwargs) # `arg` is the endpoint in this case.
+
+
+@app.context_processor
+def inject_urlfor():
+    return dict(url_for=url_for)
+
 
 def get_root():
     root = Node.query.filter_by(title='Root').first()
