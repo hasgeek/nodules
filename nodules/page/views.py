@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
 from flask import render_template, request, redirect, flash, jsonify, abort
 
 from nodular import NodeView
-from nodules.models import db
+from nodules import db, registry
 from nodules.forms import EmptyForm
+from nodules.mixins import PublishMixin
 
 from .forms import PageForm
 from .models import Page
@@ -20,9 +20,9 @@ def make_response(request, response):
         return redirect(response.get('path'))
 
 
-class PageView(NodeView):
+class PageView(NodeView, PublishMixin):
     @NodeView.route('/')
-    def show(self):
+    def view(self):
         templ = self.node.template or 'show.html'
         pf, upf = EmptyForm(), EmptyForm()  # publish, unpublish forms
         return render_template('page/%s' % templ, page=self.node, pf=pf, upf=upf)
@@ -43,28 +43,12 @@ class PageView(NodeView):
     def delete(self):
         delete_form = EmptyForm()
         if delete_form.validate_on_submit():
-            root_path = self.node.root.path
+            parent = self.node.parent, self.node.title
             db.session.delete(self.node)
             db.session.commit()
-            return redirect(root_path)
+            flash('Page "%s" deleted.' % self.node.title)
+            return redirect(registry.url_for(parent))
         return render_template('delete.html', node=self.node, form=delete_form)
-
-    @NodeView.route('/<action>', methods=['POST'])
-    @NodeView.requires_permission('publish', 'siteadmin')
-    def publish(self, action):
-        if not action in ('publish', 'unpublish'):
-            abort(404)
-        form = EmptyForm()
-        if form.validate_on_submit():
-            if action == 'publish':
-                flash('Page published.')
-                self.node.published_at = datetime.now()
-            else:
-                flash('This page is now a draft.')
-                self.node.published_at = None
-            db.session.commit()
-            return redirect(self.node.path)
-        return redirect(request.referrer)
 
 
 class NewPageView(NodeView):
@@ -72,7 +56,7 @@ class NewPageView(NodeView):
        e.g., folder - self.node.type would be `folder`.
     """
     @NodeView.route('/new/page', methods=['GET', 'POST'])
-    def new(self):
+    def newpage(self):
         pf = PageForm(request.form)
         p = Page(parent=self.node)
         if pf.validate_on_submit():

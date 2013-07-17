@@ -7,6 +7,7 @@ from baseframe import baseframe, assets
 import coaster.app
 import nodules
 from nodules import Node, db, registry
+from nodules.folder import Folder
 
 app = Flask(__name__, instance_relative_config=True)
 
