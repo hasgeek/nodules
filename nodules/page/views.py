@@ -23,7 +23,7 @@ def make_response(request, response):
 class PageView(NodeView, PublishMixin):
     @NodeView.route('/')
     def view(self):
-        templ = self.node.template or 'show.html'
+        templ = self.node.template or 'view.html'
         pf, upf = EmptyForm(), EmptyForm()  # publish, unpublish forms
         return render_template('page/%s' % templ, page=self.node, pf=pf, upf=upf)
 
