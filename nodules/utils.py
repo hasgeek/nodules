@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from flask import redirect, flash
-from nodules import db, registry
+from nodules import db, rootpub
 
 from .forms import EmptyForm
 
@@ -20,6 +20,6 @@ def change_publish_status(node, status):
             msg = 'This page is now a draft.'
         db.session.commit()
         flash(msg)
-        return redirect(registry.url_for(node, 'view'))
+        return redirect(rootpub.url_for(node, 'view'))
     return redirect(request.referrer)
 

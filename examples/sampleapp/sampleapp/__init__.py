@@ -21,7 +21,7 @@ def url_for(arg, *args, **kwargs):
     2. {{ url_for('baseframe.static', filename='index.html')}} which is handled by Flask.
     """
     if isinstance(arg, Node):
-        return registry.url_for(arg, *args, **kwargs)
+        return app.rootpub.url_for(arg, *args, **kwargs)
     return flask.url_for(arg, **kwargs) # `arg` is the endpoint in this case.
 
 
@@ -42,9 +42,12 @@ def get_root():
 
 # initialize nodules
 def init_nodules(app):
-    """Load the templates, set root node and initialize the required nodules"""
+    """Load the templates, set root node, root publisher and initialize the required nodules"""
     load_templates(app)
     app.root = get_root()
+    # set the root publisher
+    app.rootpub = nodules.rootpub
+    app.rootpub.init_root(app.root)
 
     # the `init` of respective nodules
     for n in app.config.get('NODULES', []):
@@ -57,7 +60,6 @@ def init_nodules(app):
             nodule_basepath = app.config.get('%s_BASEPATH' % n.upper(), '/')
             nodule_urlpath = app.config.get('%s_URLPATH' % n.upper(), '/')
             nodule_publisher = nodule.init_nodule(app.root, registry, nodule_basepath, nodule_urlpath)
-            setattr(app, '%s_pub' % n, nodule_publisher)
 
 
 def get_theme_dirs(app):
@@ -85,9 +87,11 @@ def load_templates(app):
 def error404(error):
     return 'page not found', 404
 
+
 def register_newfolder_view():
     from nodules.folder import NewFolderView
     registry.register_view(Node, NewFolderView) 
+
 
 def init_for(env):
     coaster.app.init_app(app, env)
@@ -108,5 +112,5 @@ def index():
 
 @app.route('/<path:anypath>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def publish_path(anypath):
-    return app.folder_pub.publish(anypath)
+    return app.rootpub.publish(anypath)
 
