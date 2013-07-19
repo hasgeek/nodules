@@ -10,11 +10,14 @@ from .forms import NewFolderForm
 
 class FolderView(NodeView):
     @NodeView.route('/')
-    def index(self):
+    def view(self):
+        """ If the folder has a child named 'index', render that.
+        Otherwise, show the listing of its children.
+        """
         index_node = Node.query.filter_by(parent=self.node, name='index').first()
         if index_node:
             view_cls = registry.nodeviews.get(index_node.type)[0]
-            return view_cls(index_node).show()
+            return view_cls(index_node).view()
         else:
             children = Node.query.filter_by(parent=self.node)
             return render_template('folder/index.html', folder=self.node, children=children)
@@ -23,6 +26,8 @@ class FolderView(NodeView):
 class NewFolderView(NodeView):
     @NodeView.route('/new/folder', methods=['GET', 'POST'])
     def newfolder(self):
+        """ Render a form to make a new folder and show existing folders in it.
+        """
         nf = NewFolderForm(request.form)
         if nf.validate_on_submit():
             f = Folder(name=nf.name.data, title=nf.title.data, parent=self.node)
@@ -30,5 +35,5 @@ class NewFolderView(NodeView):
             db.session.commit()
             flash('Folder added with title "%s".' % nf.title.data)
             return redirect('/')
-        folders = Folder.query.all()
+        folders = Folder.query.filter_by(parent=self.node).all()
         return render_template('folder/newfolder.html', form=nf, folders=folders)

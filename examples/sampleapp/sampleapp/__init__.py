@@ -90,7 +90,7 @@ def error404(error):
 
 def register_newfolder_view():
     from nodules.folder import NewFolderView
-    registry.register_view(Node, NewFolderView) 
+    registry.register_view(Node, NewFolderView)
 
 
 def init_for(env):
@@ -107,7 +107,7 @@ def init_for(env):
 
 @app.route('/', methods=['GET'])
 def index():
-    return redirect('/new/folder')
+    return redirect(url_for(app.root, 'newfolder'))
 
 
 @app.route('/<path:anypath>', methods=['GET', 'POST', 'PUT', 'DELETE'])

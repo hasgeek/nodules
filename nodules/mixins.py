@@ -7,6 +7,9 @@ from .utils import change_publish_status
 
 
 class PublishMixin(object):
+    """
+    Provides publish and unpublish endpoints.
+    """
     url_map = UrlMap([
                    UrlRule('/publish', methods=['POST'], endpoint='publish'),
                    UrlRule('/unpublish', methods=['POST'], endpoint='unpublish')

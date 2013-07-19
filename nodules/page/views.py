@@ -3,7 +3,7 @@
 from flask import render_template, request, redirect, flash, jsonify, abort
 
 from nodular import NodeView
-from nodules import db, registry
+from nodules import db, rootpub
 from nodules.forms import EmptyForm
 from nodules.mixins import PublishMixin
 
@@ -47,7 +47,7 @@ class PageView(NodeView, PublishMixin):
             db.session.delete(self.node)
             db.session.commit()
             flash('Page "%s" deleted.' % self.node.title)
-            return redirect(registry.url_for(parent))
+            return redirect(rootpub.url_for(parent))
         return render_template('delete.html', node=self.node, form=delete_form)
 
 
