@@ -3,8 +3,8 @@
 
 {% block basecontent %}
 <div>
-	<h5>Confirm delete</h5>
-	<p>Are you sure you want to delete {{node.type | upper}} "<strong>{{node.title}}</strong>"?</p>
+	<h4>Confirm delete</h4><br/>
+	<p>Are you sure you want to delete the {{node.type | title}} "<strong>{{node.title}}</strong>"?</p>
 	{% set action_url = url_for(node, 'delete') %}
 	{% set cancel_url = url_for(node) %}
 	<div>{{ renderform(form, "delete", "Yes, delete it", action=action_url, cancel_url=cancel_url)}}</div>

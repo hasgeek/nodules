@@ -2,9 +2,8 @@
 {% from 'baseframe/forms.html' import renderform %}
 
 {% block basecontent %}
-    <h4> Nodes with the tag <a href="{{tag.name}}">"{{tag.title}}"</a> </h4>
+<h4>Nodes with the tag <a href="{{url_for(tag)}}">"{{tag.title}}"</a></h4>
     <br/>
-
         {% for group in tag.nodes | groupby('type') %}
             <ul>
                 <b> {{ group.grouper | title }}s </b>
@@ -13,4 +12,5 @@
                 {% endfor %}
             </ul>
         {% endfor %}
+<a href="{{url_for('tags.index')}}">All tags</a>    
 {% endblock %}

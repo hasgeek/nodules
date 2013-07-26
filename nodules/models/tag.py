@@ -18,4 +18,4 @@ class Tag(BaseNameMixin, db.Model):
                         backref=db.backref('tags', cascade='all'))
 
     def __repr__(self):
-        return "Tag <%s>" % (self.name)
+        return "Tag <%s>" % (self.title)

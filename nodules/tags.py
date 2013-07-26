@@ -20,7 +20,7 @@ def new():
         tag.make_name()
         db.session.add(tag)
         db.session.commit()
-        flash('Tag %s successfully created.' % tag.title)
+        flash('Tag "%s" successfully created.' % tag.title)
         return redirect(url_for('tags.index'))
     return render_template('tags/edit.html', tag=None, form=ntf)
 
@@ -38,7 +38,7 @@ def edit(tagname):
     if ef.validate_on_submit():
         ef.populate_obj(tag)
         db.session.commit()
-        flash('Tag successfully renamed to %s.' % tag.title)
+        flash('Tag successfully renamed to "%s".' % tag.title)
         return redirect(url_for('tags.index'))
     return render_template('tags/edit.html', tag=tag, form=ef)
 
