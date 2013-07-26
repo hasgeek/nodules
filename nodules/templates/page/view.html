@@ -1,5 +1,6 @@
 {% extends "baseframe.html" -%}
 {% from 'baseframe/forms.html' import renderform %}
+{% from 'macros.html' import show_tags with context %}
 
 {% block basecontent %}
 
@@ -21,6 +22,7 @@
 <br/>
 
 {{page.description.html}}
+{{show_tags(page.tags)}}
 
 <a href="{{url_for(page, 'edit')}}">Edit</a>&nbsp;
 <a href="{{url_for(page.parent)}}">All Pages</a>

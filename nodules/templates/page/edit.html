@@ -1,5 +1,6 @@
 {% extends "baseframe.html" -%}
 {% from 'baseframe/forms.html' import rendersubmit, renderfield %}
+{% from 'macros.html' import edit_tags, tags_js %}
 
 {% block footerscripts %}
 <script>
@@ -46,6 +47,7 @@ if (autosave_interval){
     autosave();
 }
 });
+{{tags_js(all_tags or [])}}
 </script>
 {% endblock %}
 
@@ -76,6 +78,7 @@ if (autosave_interval){
 {{renderfield(form.title)}}
 {{renderfield(form.description, widget_css_class="codemirror")}}
 {{renderfield(form.template)}}
+{{edit_tags(form, page.tags or [])}}
 {{rendersubmit([(None, "Submit", 'btn-primary')])}}
 </form>
 

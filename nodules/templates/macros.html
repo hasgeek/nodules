@@ -1,0 +1,30 @@
+<!-- all macros related to Tags -->
+
+{% macro show_tags(tags) %}
+<p class="tags">
+  {% if tags %}
+    Tags:
+    {% for tag in tags %}
+      <span class="tag">
+          <a href="{{url_for(tag)}}">{{tag.name}}</a>{% if not loop.last %}, {% endif %}
+      </span>
+    {% endfor %}
+{% endif %}
+</p>
+{% endmacro %}
+
+{% macro edit_tags(form, existing_tags) -%}
+    {{form.tags(value=','.join(existing_tags))}}
+{%- endmacro %}
+
+{% macro tags_js(tagnames) %}
+    var existing_tags = [];
+    {% for tn in tagnames %}
+        existing_tags.push('{{tn}}');
+    {% endfor %}
+    $('#tags').select2({
+        tags: existing_tags
+    });
+{% endmacro %}
+
+<!-- end of macros related to tags -->
