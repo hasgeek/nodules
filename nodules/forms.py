@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask.ext.wtf import Form, TextField
+from flask.ext.wtf import Form, TextField, Required
 import utils
 
 
@@ -31,3 +31,7 @@ class TagsField(TextField):
 
 class TagsFieldMixin(Form):
     tags = TagsField('Tags')
+
+
+class EditTagForm(Form):
+    title = TextField('Title', validators=[Required()])

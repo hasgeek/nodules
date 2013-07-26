@@ -1,0 +1,13 @@
+{% extends "baseframe.html" -%}
+{% from 'baseframe/forms.html' import renderform %}
+
+{% block basecontent %}
+{% if tag %}
+    <h4> Edit tag {{tag.title}} </h4>
+{% else %}
+    <h4> Add a new tag <h4>
+{% endif %}
+
+{{renderform(form)}}
+
+{% endblock %}

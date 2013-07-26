@@ -29,10 +29,10 @@ def get_all_tags():
     return [t.name for t in Tag.query.all()]
 
 
-def get_or_make_tag(tagname):
-    tag = Tag.query.filter_by(title=tagname).first()
+def get_or_make_tag(title):
+    tag = Tag.query.filter_by(title=title).first()
     if not tag:
-        tag = Tag(title=tagname)
+        tag = Tag(title=title)
         tag.make_name()
         db.session.add(tag)
     return tag

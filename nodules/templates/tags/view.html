@@ -1,0 +1,16 @@
+{% extends "baseframe.html" -%}
+{% from 'baseframe/forms.html' import renderform %}
+
+{% block basecontent %}
+    <h4> Nodes with the tag <a href="{{tag.name}}">"{{tag.title}}"</a> </h4>
+    <br/>
+
+        {% for group in tag.nodes | groupby('type') %}
+            <ul>
+                <b> {{ group.grouper | title }}s </b>
+                {% for n in group.list %}
+                    &nbsp;&nbsp;&nbsp;<li><a href="{{url_for(n)}}">{{n.title}}</a></li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+{% endblock %}

@@ -1,0 +1,8 @@
+{% extends "baseframe.html" -%}
+
+{% block basecontent %}
+<h4> All Tags </h4> <br/>
+    {% for t in tags | sort(attribute='created_at', reverse=True) %}
+        <a href="{{url_for(t)}}">{{t.title}} &nbsp;({{t.nodes | length}})</a> <br/>
+    {% endfor %}
+{% endblock %}
