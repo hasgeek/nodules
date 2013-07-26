@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
 
 import os, jinja2, importlib, warnings, flask
-from flask import Flask, redirect
+from flask import Flask, Blueprint, redirect
 
 from baseframe import baseframe, assets
 import coaster.app
 import nodules
 from nodules import Node, db, registry
 from nodules.folder import Folder
+from nodules.models import Tag
+from nodules.utils import get_all_tags
+from nodules.tags import tags_bp
 
 app = Flask(__name__, instance_relative_config=True)
+app.register_blueprint(tags_bp, url_prefix='/tag')
 
 registry.register_node(Node)
 
@@ -22,12 +26,16 @@ def url_for(arg, *args, **kwargs):
     """
     if isinstance(arg, Node):
         return app.rootpub.url_for(arg, *args, **kwargs)
+    elif isinstance(arg, Tag):
+        endpoint = 'view' if not args else args[0]
+        kwargs['tagname'] = arg.name
+        arg = 'tags.%s' % endpoint
     return flask.url_for(arg, **kwargs) # `arg` is the endpoint in this case.
 
 
 @app.context_processor
 def inject_urlfor():
-    return dict(url_for=url_for)
+    return dict(url_for=url_for, all_tags=get_all_tags())
 
 
 def get_root():
@@ -105,10 +113,9 @@ def init_for(env):
     return app
 
 
-@app.route('/', methods=['GET'])
+@app.route('/')
 def index():
     return redirect(url_for(app.root, 'newfolder'))
-
 
 @app.route('/<path:anypath>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def publish_path(anypath):
