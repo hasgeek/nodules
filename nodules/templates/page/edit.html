@@ -78,7 +78,7 @@ if (autosave_interval){
 {{renderfield(form.title)}}
 {{renderfield(form.description, widget_css_class="codemirror")}}
 {{renderfield(form.template)}}
-{{edit_tags(form, page.tags or [])}}
+{{renderfield(form.tags)}}
 {{rendersubmit([(None, "Submit", 'btn-primary')])}}
 </form>
 

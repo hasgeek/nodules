@@ -13,10 +13,6 @@
 </p>
 {% endmacro %}
 
-<!-- select 2 specific -->
-{% macro edit_tags(form, tags) -%}
-    {{ form.tags(value=tags|map(attribute='name')|join(',')) }}
-{%- endmacro %}
 
 <!-- select 2 specific -->
 {% macro tags_js(tagnames) %}

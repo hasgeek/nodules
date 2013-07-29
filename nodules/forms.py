@@ -14,7 +14,7 @@ def template_exists(form, field):
     return True
 
 
-class TemplateFieldMixin(Form):
+class TemplateFieldMixin(object):
     template = TextField(validators=[template_exists])
 
 
@@ -28,9 +28,15 @@ class TagsField(TextField):
         tags = [utils.get_or_make_tag(t.strip()) for t in self.data.strip().split(',')]
         setattr(obj, name, tags)
 
+    def process_data(self, value):
+        if value:
+            self.data = ','.join([t.name for t in value])
+        else:
+            self.data = ''
 
-class TagsFieldMixin(Form):
-    tags = TagsField('Tags')
+
+class TagsFieldMixin(object):
+    tags = TagsField()
 
 
 class EditTagForm(Form):
