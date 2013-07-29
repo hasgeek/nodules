@@ -5,8 +5,6 @@ from nodular import NodeMixin, Node, db
 class Folder(NodeMixin, Node):
     __tablename__ = 'folder'
 
-    title = db.Column(db.Unicode(250), nullable=False)
-
     def permissions(self, user, inherited=None):
         perms = super(Folder, self).permissions(user, inherited)
         perms.add('view')  # Grant everyone view access
