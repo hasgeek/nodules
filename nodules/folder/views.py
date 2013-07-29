@@ -19,8 +19,7 @@ class FolderView(NodeView):
             view_cls = registry.nodeviews.get(index_node.type)[0]
             return view_cls(index_node).view()
         else:
-            children = Node.query.filter_by(parent=self.node)
-            return render_template('folder/index.html', folder=self.node, children=children)
+            return render_template('folder/index.html', folder=self.node)
 
 
 class NewFolderView(NodeView):
