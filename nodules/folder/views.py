@@ -2,8 +2,8 @@
 
 from flask import render_template, request, redirect, flash
 
-from nodular import NodeView, Node
-from nodules import db, registry
+from nodular import NodeView
+from nodules import db, registry, Node
 
 from .models import Folder
 from .forms import NewFolderForm
@@ -14,7 +14,7 @@ class FolderView(NodeView):
         """ If the folder has a child named 'index', render that.
         Otherwise, show the listing of its children.
         """
-        index_node = Node.query.filter_by(parent=self.node, name='index').first()
+        index_node = self.node.nodes.get('index')
         if index_node:
             view_cls = registry.nodeviews.get(index_node.type)[0]
             return view_cls(index_node).view()

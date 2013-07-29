@@ -14,5 +14,6 @@ def theme(self):
     """Theme of the node or that of any parent node."""
     return self.getprop('theme')
 
+
 Node.template = cached_property(template)
 Node.theme = cached_property(theme)

@@ -9,10 +9,9 @@ import os.path, jinja2
 from nodular import NodeRegistry, NodePublisher
 
 # get the monkey patched Node with theme and template
-from .node import Node
+from nodules.models.node import Node
 
 # Import basic nodes like User
-
 from nodules.models import User, db
 
 # Do not import content nodes until they are required by the client app

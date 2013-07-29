@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from nodular import NodeMixin, Node, db
+from nodular import NodeMixin
+from nodules import Node, db
+
 
 class Folder(NodeMixin, Node):
     __tablename__ = 'folder'
