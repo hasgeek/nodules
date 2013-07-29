@@ -33,10 +33,6 @@ def get_or_make_tags(titles):
     titles = set(titles)
     existing_tags = Tag.query.filter(Tag.title.in_(titles)).all()
     existing_titles = set(t.title for t in existing_tags)
-    newtags = []
-    for title in titles - existing_titles:
-        tag = Tag(title=title)
-        tag.make_name()
-        newtags.append(tag)
+    newtags = [Tag(title=t) for t in (titles - existing_titles)]
     db.session.add_all(newtags)
     return existing_tags + newtags

@@ -17,5 +17,11 @@ class Tag(BaseNameMixin, db.Model):
     nodes = db.relationship('Node', secondary='node_tags', 
                         backref=db.backref('tags', cascade='all'))
 
+
+    def __init__(self, **kwargs):
+        super(Tag, self).__init__(**kwargs)
+        if not self.name:
+            self.make_name()
+
     def __repr__(self):
         return "Tag <%s>" % (self.title)
