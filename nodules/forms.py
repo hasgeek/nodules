@@ -23,16 +23,21 @@ class ThemeFieldMixin(Form):
 
 
 class TagsField(TextField):
-    def populate_obj(self, obj, name):
-        #@@ TODO - make get_or_make_tags so that a single round trip to the DB to do this
-        tags = [utils.get_or_make_tag(t.strip()) for t in self.data.strip().split(',')]
-        setattr(obj, name, tags)
-
     def process_data(self, value):
+        # list of tag objects to csv
         if value:
             self.data = ','.join([t.name for t in value])
         else:
             self.data = ''
+
+    def process_formdata(self, data):
+        # csv to list of tag objects
+        super(TagsField, self).process_formdata(data)
+        if data:
+            tag_titles = (t.strip() for t in self.data.strip().split(','))
+            self.data = utils.get_or_make_tags(tag_titles)
+        else:
+            self.data = []
 
 
 class TagsFieldMixin(object):
