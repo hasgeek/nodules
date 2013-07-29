@@ -9,7 +9,6 @@ __all__ = ['Page']
 class Page(NodeMixin, Node):
     __tablename__ = u'page'
 
-    title = db.Column(db.Unicode(250), nullable=False)
     description = RichTextColumn(db, 'description')
     # auto save the page for every 1 minute. Disable autosave by setting it to 0.
     autosave = 60000
