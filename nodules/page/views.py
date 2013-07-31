@@ -5,7 +5,7 @@ from flask import render_template, request, redirect, flash, jsonify, abort
 from nodular import NodeView
 from nodules import db, rootpub
 from nodules.forms import EmptyForm
-from nodules.mixins import PublishMixin
+from nodules.mixins import PublishMixin, DeleteMixin
 
 from .forms import PageForm
 from .models import Page
@@ -20,7 +20,7 @@ def make_response(request, response):
         return redirect(response.get('path'))
 
 
-class PageView(NodeView, PublishMixin):
+class PageView(NodeView, PublishMixin, DeleteMixin):
     @NodeView.route('/')
     def view(self):
         templ = self.node.template or 'view.html'
@@ -37,18 +37,6 @@ class PageView(NodeView, PublishMixin):
             d = dict(status='success', path=self.node.path)
             return make_response(request, d)
         return render_template('page/edit.html', page=self.node, form=form)
-
-    @NodeView.route('/delete', methods=['GET', 'POST'])
-    @NodeView.requires_permission('delete', 'siteadmin')
-    def delete(self):
-        delete_form = EmptyForm()
-        if delete_form.validate_on_submit():
-            parent = self.node.parent, self.node.title
-            db.session.delete(self.node)
-            db.session.commit()
-            flash('Page "%s" deleted.' % self.node.title)
-            return redirect(rootpub.url_for(parent))
-        return render_template('delete.html', node=self.node, form=delete_form)
 
 
 class NewPageView(NodeView):
