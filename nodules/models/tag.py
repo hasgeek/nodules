@@ -14,8 +14,8 @@ class Tag(BaseNameMixin, db.Model):
     A node can have zero or more tags.
     """
     __tablename__ = 'tag'
-    nodes = db.relationship('Node', secondary='node_tags', 
-                        backref=db.backref('tags', cascade='all'))
+    nodes = db.relationship('Node', secondary='node_tags', lazy='dynamic',
+                        backref=db.backref('tags'))
 
 
     def __init__(self, **kwargs):
