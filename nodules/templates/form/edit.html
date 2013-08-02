@@ -1,5 +1,42 @@
 {% extends "baseframe.html" -%}
-{% from 'baseframe/forms.html' import renderform %}
+{% from 'baseframe/forms.html' import renderfield, rendersubmit %}
+
+{% macro renderquestion(q, index=0) -%}
+    <div class="question" index={{index}}>
+        {{q.label}}
+        {{q.form.hidden_tag()}}
+        {{ renderfield(q.form.label) }}
+        {{ renderfield(q.form.description) }}
+        {{ renderfield(q.form.type) }}
+        {% if q.form.choices %}
+            {{ renderfield(q.choices) }}
+        {% endif %}
+    </div>
+{%- endmacro %}
+
+{% block footerscripts %}
+<script>
+$(function (){
+$('div#add-question').click(function(){
+    var last_index = parseInt($('div.question').last().attr('index')) + 1;
+    var new_question = '{{form.questions.append_entry()}}';
+    new_question = new_question.replace(/questions-{{form.questions.last_index | int}}/g, 'questions-'+last_index);
+
+    $('div.question').last()
+            .after(
+                $('<div></div>')
+                .addClass('question')
+                .attr('index', last_index)
+                .html(new_question)
+            );
+
+    last_index++;
+});
+
+});
+</script>
+{% endblock %}
+
 
 {% block basecontent %}
 <h4>{{node.title or 'Create a New Form' }}</h4></br>
@@ -10,6 +47,31 @@
     {% set action_url = url_for(node.parent, 'newform') %}
 {% endif %}
 
-{{ renderform(form, formid='new-or-edit-form', action=action_url) }}
+{% set cancel_url = url_for(node) %}
+
+<form method="POST" action="{{action_url}}" id='new-or-edit-form' class="form-horizontal">
+    {%- if form.errors %}
+      <div class="alert alert-error">
+        <a class="close" data-dismiss="alert">×</a>
+        Please correct the indicated errors.
+      </div>
+    {%- endif %}
+    <div style="display:none;"><input type="hidden" name="form.id" value="{{ formid }}" /></div>
+    {{ form.hidden_tag() }}
+    {%- if form.csrf_token.errors %}
+      {% for error in form.csrf_token.errors %}<div class="alert alert-error">{{ error }}</div>{% endfor %}
+    {% endif %}
+
+    {{ renderfield(form.title) }}
+    {{ renderfield(form.description) }}
+
+    {% for q in form.questions %}
+        {{ renderquestion(q, index=loop.index0) }}
+    {% endfor %}
+
+    <div class="btn" id="add-question">Add one more question</div>
+
+{{ rendersubmit([(None, submit or _("Submit"), 'btn-primary')], cancel_url=cancel_url) }}
+</form>
 
 {% endblock %}
