@@ -1,9 +1,12 @@
 {% extends "baseframe.html" -%}
 {% from 'baseframe/forms.html' import renderfield, rendersubmit %}
 
+
+<!-- use only double quotes "" in the following macro -->
 {% macro renderquestion(q) -%}
-    <div class="question" >
-        {{q.label}}
+    <div class="question">
+        <hr>
+        <div class="remove-question btn" style="float:right;">Remove</div>
         {{q.form.hidden_tag()}}
         {{ renderfield(q.form.label) }}
         {{ renderfield(q.form.description) }}
@@ -17,6 +20,12 @@
 {% block footerscripts %}
 <script>
 $(function (){
+    // remove question
+    $('div.remove-question').click(function(){
+       $(this).parent().remove();
+    });
+
+    // add question
     $('div#add-question').click(function(){
         var last_index = $('div.question').length;
         // make a js variable with the multi-line new question
