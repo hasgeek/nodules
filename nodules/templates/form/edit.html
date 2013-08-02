@@ -1,0 +1,15 @@
+{% extends "baseframe.html" -%}
+{% from 'baseframe/forms.html' import renderform %}
+
+{% block basecontent %}
+<h4>{{node.title or 'Create a New Form' }}</h4></br>
+
+{% if node.title %}
+    {% set action_url = url_for(node, 'edit') %}
+{% else %}
+    {% set action_url = url_for(node.parent, 'newform') %}
+{% endif %}
+
+{{ renderform(form, formid='new-or-edit-form', action=action_url) }}
+
+{% endblock %}

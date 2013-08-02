@@ -15,10 +15,10 @@ def change_publish_status(node, status):
     if form.validate_on_submit():
         if status:
             node.published_at = datetime.now()
-            msg = 'Page published.'
+            msg = '%s published.' % node.type.title()
         else:
             node.published_at = None
-            msg = 'This page is now a draft.'
+            msg = 'This %s is now a draft.' % node.type
         db.session.commit()
         flash(msg)
         return redirect(rootpub.url_for(node, 'view'))

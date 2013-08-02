@@ -1,0 +1,36 @@
+{% extends "baseframe.html" -%}
+{% from 'baseframe/forms.html' import renderform %}
+{% from 'macros.html' import show_tags with context %}
+
+{% block basecontent %}
+
+<div class="row">
+<div class="span9">
+<h4>{{form.title}}</h4>
+</div>
+<div class="span3">
+{% if not form.published_at %}
+    {% set publish_url = url_for(form, 'publish') %}
+    <!-- Publish -->
+    {{renderform(pf, formid="publish-form", submit="Publish", action=publish_url)}}
+{% else %}
+    <!-- Unpublish -->
+    {% set action_url = url_for(form, 'unpublish') %}
+    {{renderform(upf, formid="unpublish-form", submit="Unpublish", action=action_url)}}
+{% endif %}
+</div>
+<br/>
+
+{{form.description}}
+
+<hr>
+{% for q in form.questions %}
+    <b>{{q.label}}</b> (<span style='font-size:12px;'>{{q.description}}</span>)
+    <br />
+    Type: {{q.type}}
+    <hr>
+{% endfor %}
+
+<a href="{{url_for(form, 'edit')}}">Edit</a>&nbsp;
+<a href="{{url_for(form.parent)}}">Back</a>
+{% endblock %}

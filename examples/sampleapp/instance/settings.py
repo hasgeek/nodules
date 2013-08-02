@@ -8,7 +8,7 @@ SECRET_KEY = 'make this something random'
 TIMEZONE = 'Asia/Calcutta'
 
 #: Node types that are going to be used
-NODULES = ('PAGE', 'FOLDER', )
+NODULES = ('PAGE', 'FOLDER', 'FORM', )
 
 #: Theme for each node type
 # PAGE_THEME = 'templates/themes/mytheme/'  # path to directory where `page/{edit.html,show.html,...}' exists
