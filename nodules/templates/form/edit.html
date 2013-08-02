@@ -1,8 +1,8 @@
 {% extends "baseframe.html" -%}
 {% from 'baseframe/forms.html' import renderfield, rendersubmit %}
 
-{% macro renderquestion(q, index=0) -%}
-    <div class="question" index={{index}}>
+{% macro renderquestion(q) -%}
+    <div class="question" >
         {{q.label}}
         {{q.form.hidden_tag()}}
         {{ renderfield(q.form.label) }}
@@ -17,22 +17,17 @@
 {% block footerscripts %}
 <script>
 $(function (){
-$('div#add-question').click(function(){
-    var last_index = parseInt($('div.question').last().attr('index')) + 1;
-    var new_question = '{{form.questions.append_entry()}}';
-    new_question = new_question.replace(/questions-{{form.questions.last_index | int}}/g, 'questions-'+last_index);
+    $('div#add-question').click(function(){
+        var last_index = $('div.question').length;
+        // make a js variable with the multi-line new question
+        var new_question = '{{ renderquestion(form.questions.append_entry()).replace("\n", "\\") }}';
 
-    $('div.question').last()
-            .after(
-                $('<div></div>')
-                .addClass('question')
-                .attr('index', last_index)
-                .html(new_question)
-            );
+        // update the index to the latest (index starts with 0)
+        new_question = new_question.replace(/uestions-{{ form.questions.last_index | int }}/g, 'uestions-'+last_index);
 
-    last_index++;
-});
-
+        // append the new question after all the existing ones.
+        $('div.question').last().after(new_question);
+    });
 });
 </script>
 {% endblock %}
@@ -66,7 +61,7 @@ $('div#add-question').click(function(){
     {{ renderfield(form.description) }}
 
     {% for q in form.questions %}
-        {{ renderquestion(q, index=loop.index0) }}
+        {{ renderquestion(q) }}
     {% endfor %}
 
     <div class="btn" id="add-question">Add one more question</div>
