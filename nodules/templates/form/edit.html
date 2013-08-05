@@ -53,7 +53,7 @@ $(function (){
     show choices for radio, select fields and hide them for others.
     */
 
-    $("select[id$='type']").change(function(){
+    $(document).on('change', 'select[id$="type"]', function(){
         var qtype = $(this).attr('value');
         var types_with_choices = new Array('RadioField', 'SelectMultipleField', 'SelectField');
         var question = $(this).parents('div.question');
@@ -71,7 +71,8 @@ $(function (){
     /*
     remove question
     */
-    $('div.remove-question').click(function(){
+    // use `.on` to make it work with questions that get added in future too.
+    $(document).on('click', 'div.remove-question', function(){
         $(this).parent().remove();
     });
 
