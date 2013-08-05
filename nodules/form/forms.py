@@ -9,11 +9,12 @@ from flask.ext.wtf import (Form, TextField, TextAreaField, FormField,
 __all__ = ['MetaForm']
 
 
-wtform_field_types = ('BooleanField', 'DecimalField', 'DateField', 'DateTimeField',
+wtform_field_types = ('BooleanField', 'DateField', 'DateTimeField',
     'FloatField', 'IntegerField', 'RadioField', 'SelectField',
     'SelectMultipleField', 'StringField')
 
 all_field_types = [(f, f.replace('Field', '')) for f in wtform_field_types]
+all_field_types.insert(0, ("", "--Select--"))
 
 
 # Subclassed from wtforms.Form instead of flask.wtf.Form to avoid mutliple csrf fields in MetaForm
@@ -23,8 +24,14 @@ class Question(wtforms.Form):
     """
     label = TextField(validators=[Required()])
     description = TextField()
-    type = SelectField(choices=all_field_types)
-    choices = FieldList(TextField()) # choices for SelectField, RadioField, BooleanField
+    type = SelectField(choices=all_field_types, validators=[Required()])
+    choices = FieldList(TextField(validators=[Required()])) # choices for select, radio
+
+    def validate(self):
+        if self.type in ('SelectField', 'SelectMultipleField', 'RadioField'):
+            self.choices.min_entries = 2
+        rv = wtforms.Form.validate(self)
+        return bool(rv)
 
 
 class MetaForm(Form):

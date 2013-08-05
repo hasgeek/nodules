@@ -1,30 +1,83 @@
 {% extends "baseframe.html" -%}
 {% from 'baseframe/forms.html' import renderfield, rendersubmit %}
 
+{% macro renderchoice(c) -%}
+    <li>{{ c() }}</li>
+{%- endmacro %}
 
 <!-- use only double quotes "" in the following macro -->
-{% macro renderquestion(q) -%}
-    <div class="question">
+{% macro renderquestion(q, index=-1) -%}
+    <div class="question" {% if index != -1 %} index='{{index}}' {% endif %}>
         <hr>
         <div class="remove-question btn" style="float:right;">Remove</div>
         {{ renderfield(q.form.label) }}
         {{ renderfield(q.form.description) }}
         {{ renderfield(q.form.type) }}
+        <div class="choices">
         {% if q.form.choices %}
-            {{ renderfield(q.choices) }}
+            <p><b>Choices</b></p>
+            <ul>
+            {% for c in q.choices %}
+                {{ renderchoice(c) }}
+            {% endfor %}
+            </ul>
         {% endif %}
+        </div>
     </div>
 {%- endmacro %}
+
 
 {% block footerscripts %}
 <script>
 $(function (){
-    // remove question
-    $('div.remove-question').click(function(){
-       $(this).parent().remove();
+
+    function add_choices(q, max){
+        var choice = '{{ renderchoice(form.questions[0].form.choices.append_entry()).replace("\n", "\\") }}';
+        var qn = q.attr('index');
+        var choice_id_start = 'questions-' + qn + '-choices-';
+        var current_choices = $(q).children('div.choices').find('input[id^="'+ choice_id_start + '"]');
+        var cn = current_choices.length;
+
+        for ( ; cn < (max || cn+1) ; cn++){
+            choice = choice.replace(/questions-0/g, 'questions-' + qn);
+            choice = choice.replace(/choices-0/g, 'choices-' + cn);
+            q.children('div.choices').append(choice);
+        }
+    }
+
+    function remove_choice(q){
+        $(this).parent().remove();
+    }
+
+    /*
+    show choices for radio, select fields and hide them for others.
+    */
+
+    $("select[id$='type']").change(function(){
+        var qtype = $(this).attr('value');
+        var types_with_choices = new Array('RadioField', 'SelectMultipleField', 'SelectField');
+        var question = $(this).parents('div.question');
+        var choices = question.find('div.choices');
+
+        // indexOf doesn't work in IE<=8.
+        if ($.inArray(qtype, types_with_choices) > -1){
+            add_choices(question, max=2);
+            choices.show();
+        } else {
+            choices.hide();
+        }
     });
 
-    // add question
+    /*
+    remove question
+    */
+    $('div.remove-question').click(function(){
+        $(this).parent().remove();
+    });
+
+    /*
+    add question
+    */
     $('div#add-question').click(function(){
         var last_index = $('div.question').length;
         // make a js variable with the multi-line new question
@@ -32,6 +85,9 @@ $(function (){
 
         // update the index to the latest (index starts with 0)
         new_question = new_question.replace(/uestions-{{ form.questions.last_index | int }}/g, 'uestions-'+last_index);
+
+        // set the index
+        new_question = $(new_question).attr('index', last_index);
 
         // append the new question after all the existing ones.
         $('div.question').last().after(new_question);
@@ -42,7 +98,7 @@ $(function (){
 
 
 {% block basecontent %}
-<h4>{{node.title or 'Create a New Form' }}</h4></br>
+<h4>{{node.title or 'Create a new form' }}</h4></br>
 
 {% if node.title %}
     {% set action_url = url_for(node, 'edit') %}
@@ -68,8 +124,10 @@ $(function (){
     {{ renderfield(form.title) }}
     {{ renderfield(form.description) }}
 
+    <br/>
+    <p><b>Questions</b></p>
     {% for q in form.questions %}
-        {{ renderquestion(q) }}
+        {{ renderquestion(q, index=loop.index0) }}
     {% endfor %}
 
     <div class="btn" id="add-question">Add one more question</div>
