@@ -2,7 +2,7 @@
 {% from 'baseframe/forms.html' import renderfield, rendersubmit %}
 
 {% macro renderchoice(c) -%}
-    <li>{{ c() }}</li>
+    {{ renderfield(c) }}
 {%- endmacro %}
 
 <!-- use only double quotes "" in the following macro -->
@@ -39,8 +39,8 @@ $(function (){
         var cn = current_choices.length;
 
         for ( ; cn < (max || cn+1) ; cn++){
-            choice = choice.replace(/questions-0/g, 'questions-' + qn);
-            choice = choice.replace(/choices-0/g, 'choices-' + cn);
+            choice = choice.replace(/questions-0/gi, 'questions-' + qn);
+            choice = choice.replace(/choices-0/gi, 'choices-' + cn);
             q.children('div.choices').append(choice);
         }
     }
