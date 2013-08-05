@@ -33,7 +33,7 @@ class TagsField(TextField):
     def process_formdata(self, data):
         # csv to list of tag objects
         if data[0]:
-            tag_titles = (t.strip() for t in data[0].strip().split(','))
+            tag_titles = (t.strip() for t in data[0].strip(' ,').split(','))
             self.data = utils.get_or_make_tags(tag_titles)
         else:
             self.data = []
