@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
-from flask import redirect, flash
+from flask import redirect, flash, request
 
 from nodules import db, rootpub
 from .models import Tag
 import forms
+
 
 def change_publish_status(node, status):
     """
