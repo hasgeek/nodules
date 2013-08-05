@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import wtforms
 from flask.ext.wtf import (Form, TextField, TextAreaField, FormField,
                     Required, SelectField, FieldList, ListWidget,
                     SubmitField)
@@ -15,9 +16,10 @@ wtform_field_types = ('BooleanField', 'DecimalField', 'DateField', 'DateTimeFiel
 all_field_types = [(f, f.replace('Field', '')) for f in wtform_field_types]
 
 
-class Question(Form):
+# Subclassed from wtforms.Form instead of flask.wtf.Form to avoid mutliple csrf fields in MetaForm
+class Question(wtforms.Form):
     """
-    Each field of the form
+    Each question field of the MetaForm.
     """
     label = TextField(validators=[Required()])
     description = TextField()
