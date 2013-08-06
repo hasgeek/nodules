@@ -2,7 +2,10 @@
 {% from 'baseframe/forms.html' import renderfield, rendersubmit %}
 
 {% macro renderchoice(c) -%}
-    {{ renderfield(c) }}
+    <div class="choice">
+        <div class="remove-choice btn" style="float:right;">Remove choice</div>
+        {{ renderfield(c) }}
+    </div>
 {%- endmacro %}
 
 <!-- use only double quotes "" in the following macro -->
@@ -45,9 +48,9 @@ $(function (){
         }
     }
 
-    function remove_choice(q){
+    $(document).on('click', 'div.remove-choice', function(){
         $(this).parent().remove();
-    }
+    });
 
     /*
     show choices for radio, select fields and hide them for others.
@@ -57,14 +60,14 @@ $(function (){
         var qtype = $(this).attr('value');
         var types_with_choices = new Array('RadioField', 'SelectMultipleField', 'SelectField');
         var question = $(this).parents('div.question');
-        var choices = question.find('div.choices');
+        var choices = question.find('div.choice');
 
         // indexOf doesn't work in IE<=8.
         if ($.inArray(qtype, types_with_choices) > -1){
             add_choices(question, max=2);
             choices.show();
         } else {
-            choices.hide();
+            choices.remove();
         }
     });
 
