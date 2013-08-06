@@ -34,16 +34,21 @@
 $(function (){
 
     function add_choices(q, max){
-        var choice = '{{ renderchoice(form.questions[0].form.choices.append_entry()).replace("\n", "\\") }}';
+        var choice = '{{renderchoice(choice_00).replace("\n", "\\")}}';
+        var $choice = $(choice);
+        $choice.find('input').attr('value', '');
         var qn = q.attr('index');
         var current_choices = $(q).children('div.choices').children('div.choice');
         var cn = current_choices.length;
-        max = (max || cn+1);
+        max = (max || (cn+1));
 
         for ( ; cn < max ; cn++){
-            choice = choice.replace(/uestions-0/gi, 'uestions-' + qn);
-            choice = choice.replace(/hoices-0/gi, 'hoices-' + cn);
-            q.children('div.choices').append(choice);
+            $choice.html(function(i, c){
+                c = c.replace(/uestions-0/gi, 'uestions-' + qn);
+                c = c.replace(/hoices-0/gi, 'hoices-' + cn);
+                return c;
+            });
+            q.children('div.choices').append($choice.clone());
         }
     }
 

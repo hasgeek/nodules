@@ -36,7 +36,8 @@ class FormView(NodeView, PublishMixin, DeleteMixin):
             db.session.commit()
             d = dict(status='success', path=self.node.path)
             return make_response(request, d)
-        return render_template('form/edit.html', node=self.node, form=form)
+        choice_00 = form.questions[0].choices[0]
+        return render_template('form/edit.html', node=self.node, form=form, choice_00=choice_00)
 
 
 class NewFormView(NodeView):
@@ -53,4 +54,5 @@ class NewFormView(NodeView):
             db.session.commit()
             d = dict(status='success', path=f.path)
             return make_response(request, d)
-        return render_template('form/edit.html', node=f, form=mf)
+        choice_00 = mf.questions[0].choices.append_entry()
+        return render_template('form/edit.html', node=f, form=mf, choice_00=choice_00)
