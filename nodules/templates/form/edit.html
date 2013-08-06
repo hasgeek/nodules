@@ -16,14 +16,13 @@
         {{ renderfield(q.form.label) }}
         {{ renderfield(q.form.description) }}
         {{ renderfield(q.form.type) }}
-        <div class="choices">
+        <div class="choices" {% if not q.form.type.data in ("RadioField", "SelectMultipleField", "SelectField") %} style="display:none;" {% endif %} >
+        <b>Choices</b>
+        <div class="add-choice btn">Add choice</div>
         {% if q.form.choices %}
-            <p><b>Choices</b></p>
-            <ul>
             {% for c in q.choices %}
                 {{ renderchoice(c) }}
             {% endfor %}
-            </ul>
         {% endif %}
         </div>
     </div>
@@ -37,19 +36,23 @@ $(function (){
     function add_choices(q, max){
         var choice = '{{ renderchoice(form.questions[0].form.choices.append_entry()).replace("\n", "\\") }}';
         var qn = q.attr('index');
-        var choice_id_start = 'questions-' + qn + '-choices-';
-        var current_choices = $(q).children('div.choices').find('input[id^="'+ choice_id_start + '"]');
+        var current_choices = $(q).children('div.choices').children('div.choice');
         var cn = current_choices.length;
+        max = (max || cn+1);
 
-        for ( ; cn < (max || cn+1) ; cn++){
-            choice = choice.replace(/questions-0/gi, 'questions-' + qn);
-            choice = choice.replace(/choices-0/gi, 'choices-' + cn);
+        for ( ; cn < max ; cn++){
+            choice = choice.replace(/uestions-0/gi, 'uestions-' + qn);
+            choice = choice.replace(/hoices-0/gi, 'hoices-' + cn);
             q.children('div.choices').append(choice);
         }
     }
 
     $(document).on('click', 'div.remove-choice', function(){
         $(this).parent().remove();
+    });
+
+    $(document).on('click', 'div.add-choice', function(){
+        add_choices($(this).parents('div.question'));
     });
 
     /*
@@ -60,14 +63,14 @@ $(function (){
         var qtype = $(this).attr('value');
         var types_with_choices = new Array('RadioField', 'SelectMultipleField', 'SelectField');
         var question = $(this).parents('div.question');
-        var choices = question.find('div.choice');
+        var choices = question.find('div.choices');
 
         // indexOf doesn't work in IE<=8.
         if ($.inArray(qtype, types_with_choices) > -1){
             add_choices(question, max=2);
             choices.show();
         } else {
-            choices.remove();
+            choices.hide();
         }
     });
 
@@ -134,6 +137,7 @@ $(function (){
         {{ renderquestion(q, index=loop.index0) }}
     {% endfor %}
 
+    <hr>
     <div class="btn" id="add-question">Add one more question</div>
 
 {{ rendersubmit([(None, submit or _("Submit"), 'btn-primary')], cancel_url=cancel_url) }}
