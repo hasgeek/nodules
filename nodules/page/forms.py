@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from flask.ext.wtf import Form, TextField, TextAreaField, Required
+from wtforms import TextField, TextAreaField
+from wtforms.validators import Required
+from baseframe.forms import Form
 
 from nodules.models import RichText
 from nodules.forms import TemplateFieldMixin, TagsFieldMixin

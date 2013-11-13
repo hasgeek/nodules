@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from flask.ext.wtf import Form, TextField, Required
+from wtforms import TextField
+from wtforms.validators import Required
+from baseframe.forms import Form
 import utils
 
 

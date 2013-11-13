@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import wtforms
-from flask.ext.wtf import (Form, TextField, TextAreaField, FormField,
-                    Required, SelectField, FieldList, ListWidget,
-                    SubmitField)
-
+from wtforms import (TextField, TextAreaField, FormField,
+                    SelectField, FieldList, SubmitField)
+from wtforms.validators import Required
+from wtforms.widgets import ListWidget
+from baseframe.forms import Form
 
 __all__ = ['MetaForm']
 

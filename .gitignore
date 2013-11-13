@@ -11,3 +11,5 @@ docs/_build
 build/
 dist/
 error.log
+examples/sampleapp/instance/development.py
+examples/sampleapp/sampleapp/static/

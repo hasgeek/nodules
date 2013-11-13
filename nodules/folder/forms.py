@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from flask.ext.wtf import Form, TextField, Required, ValidationError
+from wtforms import TextField, ValidationError
+from wtforms.validators import Required
 from .models import Folder
+from baseframe.forms import Form
 
 
 def valid_folder_name(form, field):
